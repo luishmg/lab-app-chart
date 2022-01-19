@@ -1,0 +1,17 @@
+{{- if .Values.ingress.internal }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "app.fullname" . }}-internal
+spec:
+  hosts:
+  - '{{ .Values.externalUrl.subdomain | default (include "app.fullname" .) }}.k8s.{{ .Values.internalUrl.environment }}.{{ .Values.internalUrl.company }}.internal'
+  gateways:
+  - istio-system/gateway-internal
+  http:
+  - route:
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: {{ include "app.fullname" . }}
+{{- end }}
